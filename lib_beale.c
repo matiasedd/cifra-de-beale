@@ -14,7 +14,6 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
     if ((input_stream = fopen(input, "r")) == NULL)
         throw_error("Nao foi possivel abrir a mensagem original");
 
-    // TODO: implementar a codificacao
     int counter = 0;
     char line[LINE_SIZE];
 
@@ -51,30 +50,34 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
         }
     }
 
-    keyfile_stream = fopen(keyfile, "w");
-
-    if (keyfile_stream == NULL)
-        throw_error("Nao foi possivel abrir o arquivo de chave");
-
-    char_node = char_list->head;
-
-    while (char_node != NULL)
+    if (keyfile != NULL)
     {
-        fprintf(keyfile_stream, "%c:", char_node->data);
-        struct num_node *num_node = char_node->num_list->head;
+        keyfile_stream = fopen(keyfile, "w");
 
-        while (num_node != NULL)
+        if (keyfile_stream == NULL)
+            throw_error("Nao foi possivel abrir o arquivo de chave");
+
+        char_node = char_list->head;
+
+        while (char_node != NULL)
         {
-            fprintf(keyfile_stream, " %d", num_node->data);
-            num_node = num_node->next;
-        }
+            fprintf(keyfile_stream, "%c:", char_node->data);
+            struct num_node *num_node = char_node->num_list->head;
 
-        fprintf(keyfile_stream, "\n");
-        char_node = char_node->next;
+            while (num_node != NULL)
+            {
+                fprintf(keyfile_stream, " %d", num_node->data);
+                num_node = num_node->next;
+            }
+
+            fprintf(keyfile_stream, "\n");
+            char_node = char_node->next;
+        }
+    
+        fclose(keyfile_stream);
     }
 
     destroy_char_list(char_list);
-    fclose(keyfile_stream);
     fclose(input_stream);
     fclose(book_stream);
 }

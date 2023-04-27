@@ -4,9 +4,36 @@
 
 #include "lib_beale.h"
 
+void create_keyfile(char *keyfile, struct char_list *char_list)
+{
+    FILE *stream = fopen(keyfile, "w");
+
+    if (stream == NULL)
+        throw_error("Nao foi possivel abrir o arquivo de chave");
+
+    struct char_node *node = char_list->head;
+
+    while (node != NULL)
+    {
+        fprintf(stream, "%c:", node->data);
+        struct num_node *num_node = node->num_list->head;
+
+        while (num_node != NULL)
+        {
+            fprintf(stream, " %d", num_node->data);
+            num_node = num_node->next;
+        }
+
+        fprintf(stream, "\n");
+        node = node->next;
+    }
+
+    fclose(stream);
+}
+
 void encode_message(char *book, char *input, char *output, char *keyfile)
 {
-    FILE *book_stream, *input_stream, *keyfile_stream;
+    FILE *book_stream, *input_stream;
 
     if ((book_stream = fopen(book, "r")) == NULL)
         throw_error("Nao foi possivel abrir o livro cifra");
@@ -51,31 +78,7 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
     }
 
     if (keyfile != NULL)
-    {
-        keyfile_stream = fopen(keyfile, "w");
-
-        if (keyfile_stream == NULL)
-            throw_error("Nao foi possivel abrir o arquivo de chave");
-
-        char_node = char_list->head;
-
-        while (char_node != NULL)
-        {
-            fprintf(keyfile_stream, "%c:", char_node->data);
-            struct num_node *num_node = char_node->num_list->head;
-
-            while (num_node != NULL)
-            {
-                fprintf(keyfile_stream, " %d", num_node->data);
-                num_node = num_node->next;
-            }
-
-            fprintf(keyfile_stream, "\n");
-            char_node = char_node->next;
-        }
-    
-        fclose(keyfile_stream);
-    }
+        create_keyfile(keyfile, char_list);
 
     destroy_char_list(char_list);
     fclose(input_stream);

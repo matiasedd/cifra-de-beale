@@ -154,6 +154,29 @@ struct num_node *get_random_num_node(struct num_list *list)
     return node;
 }
 
+struct char_node *find_char_node_by_num(struct char_list *list, int num)
+{
+    struct num_node *num_node;
+    struct char_node *char_node = list->head;
+
+    while (char_node != NULL)
+    {
+        num_node = char_node->num_list->head;
+
+        while (num_node != NULL)
+        {
+            if (num_node->data == num)
+                return char_node;
+
+            num_node = num_node->next;
+        }
+
+        char_node = char_node->next;
+    }
+
+    return NULL;
+}
+
 void print_num_list(struct num_list *list)
 {
     struct num_node *node = list->head;

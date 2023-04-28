@@ -117,7 +117,7 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
 
 void decode_using_book(char *input, char *book, char *output)
 {
-    FILE *book_stream, *input_stream;
+    FILE *book_stream, *input_stream, *output_stream;
 
     if ((book_stream = fopen(book, "r")) == NULL)
         throw_error("Nao foi possivel abrir o livro cifra");
@@ -125,10 +125,38 @@ void decode_using_book(char *input, char *book, char *output)
     if ((input_stream = fopen(input, "r")) == NULL)
         throw_error("Nao foi possivel abrir a mensagem codificada");
 
-    // TODO: implementar a decodificacao
+    if ((output_stream = fopen(output, "w")) == NULL)
+        throw_error("Nao foi possivel abrir o arquivo de saida");
 
-    fclose(book_stream);
+    char line[LINE_SIZE];
+    struct char_list *char_list = create_list_from_book(book_stream);
+
+    while (fgets(line, LINE_SIZE, input_stream) != NULL)
+    {
+        char *token = strtok(line, " ");
+
+        while (token != NULL)
+        {
+            int number = atoi(token);
+
+            if (number == SPACE_CHAR)
+                fprintf(output_stream, " ");
+            else if (number == UNKNOWN_CHAR)
+                fprintf(output_stream, "?");
+            else
+            {
+                struct char_node *char_node = find_char_node_by_num(char_list, number);
+                fprintf(output_stream, "%c", char_node->data);
+            }
+
+            token = strtok(NULL, " ");
+        }
+    }    
+
+    destroy_char_list(char_list);
+    fclose(output_stream);
     fclose(input_stream);
+    fclose(book_stream);
 }
 
 void decode_using_keyfile(char *input, char *keyfile, char *output)

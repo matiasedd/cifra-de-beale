@@ -7,20 +7,28 @@
 
 int main(int argc, char *argv[])
 {
-    int opt, encode;
+    int opt, encode, decode_with_book;
     char *book, *input, *output, *keyfile;
 
     srand(time(NULL));
 
-    while ((opt = getopt(argc, argv, "eb:m:o:c:")) != -1)
+    while ((opt = getopt(argc, argv, "deb:m:o:c:i:")) != -1)
     {
         switch (opt)
         {
-            case 'e':
-                encode = 1;
-                break;
             case 'b':
                 book = optarg;
+                decode_with_book = YES;
+                break;
+            case 'c':
+                keyfile = optarg;
+                decode_with_book = NO;
+                break;
+            case 'd':
+                encode = NO;
+                break;
+            case 'e':
+                encode = YES;
                 break;
             case 'm':
                 input = optarg;
@@ -28,8 +36,8 @@ int main(int argc, char *argv[])
             case 'o':
                 output = optarg;
                 break;
-            case 'c':
-                keyfile = optarg;
+            case 'i':
+                input = optarg;
                 break;
             default:
                 fprintf(stderr, "Uso: %s -b <LivroCifra> -m <MensagemOriginal> -o <MensagemCodificada> -c <ArquivoDeChaves>\n", argv[0]);
@@ -39,6 +47,10 @@ int main(int argc, char *argv[])
 
     if (encode)
         encode_message(book, input, output, keyfile);
+    else if (decode_with_book)
+        decode_using_book(input, book, output);
+    else
+        decode_using_keyfile(input, keyfile, output);
         
     return EXIT_SUCCESS;
 }

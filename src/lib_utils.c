@@ -25,7 +25,7 @@ int is_alphanumeric(char c)
 
 char to_lowercase(char c)
 {
-    return c + 32;
+    return is_uppercase(c) ? c + 32 : c;
 }
 
 void throw_error(char *message)

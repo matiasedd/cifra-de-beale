@@ -1,20 +1,22 @@
 CC = gcc
-CFLAGS = -std=c99 -Wall -g
+CFLAGS = -std=c99 -Wall -I $(LIBS_DIR)
 
-OBJECTS = lib_beale.o lib_utils.o lib_list.o
+SRC_DIR = src
+OBJ_DIR = objects
+LIBS_DIR = libs
 
-all: beale
+TARGET = beale
 
-beale: $(OBJECTS)
+OBJECTS = $(OBJ_DIR)/lib_utils.o $(OBJ_DIR)/lib_list.o $(OBJ_DIR)/lib_beale.o
 
-lib_beale.o: lib_beale.c lib_beale.h lib_utils.h lib_list.h
- 
-lib_utils.o: lib_utils.c lib_utils.h
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBS_DIR)/%.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
-lib_list.o: lib_list.c lib_list.h
+all: $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(TARGET) beale.c $(OBJECTS)
 
 clean:
-	rm -f *.o beale
+	rm -f $(OBJ_DIR)/*.o 
 
 purge: clean
-	rm -f *~
+	rm -f $(OBJ_DIR)/*.o $(TARGET)

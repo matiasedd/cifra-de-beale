@@ -33,7 +33,7 @@ void create_keyfile(char *keyfile, struct char_list *char_list)
 
 void encode_message(char *book, char *input, char *output, char *keyfile)
 {
-    FILE *book_stream, *input_stream;
+    FILE *book_stream, *input_stream, *output_stream;
 
     if ((book_stream = fopen(book, "r")) == NULL)
         throw_error("Nao foi possivel abrir o livro cifra");
@@ -42,7 +42,7 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
         throw_error("Nao foi possivel abrir a mensagem original");
 
     int counter = 0;
-    char line[LINE_SIZE];
+    char letter, line[LINE_SIZE];
 
     struct char_node *char_node;
     struct char_list *char_list = create_char_list();
@@ -56,7 +56,7 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
 
         while (token != NULL)
         {
-            char letter = token[0];
+            letter = token[0];
 
             if (is_alphanumeric(letter))
             {
@@ -75,6 +75,27 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
 
             token = strtok(NULL, " ");
         }
+    }
+
+    if ((output_stream = fopen(output, "w")) == NULL)
+        throw_error("Nao foi possivel abrir o arquivo de saida");
+
+    while ((letter = fgetc(input_stream)) != EOF)
+    {
+        if (is_alphanumeric(letter))
+        {
+            if (is_uppercase(letter))
+                letter = to_lowercase(letter);
+
+            char_node = find_char_node(char_list, letter);
+            int random = get_random_num_node(char_node->num_list)->data;
+            
+            fprintf(output_stream, "%d ", random);
+        }
+        else if (letter == ' ')
+            fprintf(output_stream, "%d ", SPACE_CHAR);
+        else
+            fprintf(output_stream, "%d ", UNKNOWN_CHAR);
     }
 
     if (keyfile != NULL)

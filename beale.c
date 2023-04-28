@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <time.h>
 
 #include "lib_beale.h"
 
@@ -8,6 +9,8 @@ int main(int argc, char *argv[])
 {
     int opt, encode;
     char *book, *input, *output, *keyfile;
+
+    srand(time(NULL));
 
     while ((opt = getopt(argc, argv, "eb:m:o:c:")) != -1)
     {

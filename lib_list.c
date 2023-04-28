@@ -10,6 +10,7 @@ struct num_list *create_num_list()
     if (list == NULL)
         return NULL;
 
+    list->size = 0;
     list->head = NULL;
 
     return list;
@@ -65,6 +66,8 @@ void insert_num_node(struct num_list *list, int data)
     if (list->head == NULL)
     {
         list->head = node;
+        list->size++;
+
         return;
     }
 
@@ -87,6 +90,8 @@ void insert_num_node(struct num_list *list, int data)
         previous->next = node;
         node->next = current;
     }
+
+    list->size++;
 }
 
 void insert_char_node(struct char_list *list, char data)
@@ -133,6 +138,20 @@ struct char_node *find_char_node(struct char_list *list, char data)
     }
 
     return NULL;
+}
+
+struct num_node *get_random_num_node(struct num_list *list)
+{
+    int random = rand() % list->size;
+    struct num_node *node = list->head;
+    
+    while (random > 0)
+    {
+        node = node->next;
+        random--;
+    }
+
+    return node;
 }
 
 void print_num_list(struct num_list *list)

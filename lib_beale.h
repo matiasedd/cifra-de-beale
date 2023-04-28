@@ -3,6 +3,9 @@
 
 #define LINE_SIZE 1024
 
+#define SPACE_CHAR -1
+#define UNKNOWN_CHAR -2 
+
 void encode_message(char *book, char *input, char *output, char *keyfile);
 
 void decode_using_book(char *input, char *book, char *output);

@@ -4,6 +4,7 @@ struct num_node {
 };
 
 struct num_list {
+    int size;
     struct num_node *head;
 };
 
@@ -30,6 +31,8 @@ void insert_char_node(struct char_list *list, char data);
 void insert_num_node(struct num_list *list, int data);
 
 struct char_node *find_char_node(struct char_list *list, char data);
+
+struct num_node *get_random_num_node(struct num_list *list);
 
 void print_char_list(struct char_list *list);
 

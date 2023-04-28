@@ -39,9 +39,6 @@ int main(int argc, char *argv[])
             case 'i':
                 input = optarg;
                 break;
-            default:
-                fprintf(stderr, "Uso: %s -b <LivroCifra> -m <MensagemOriginal> -o <MensagemCodificada> -c <ArquivoDeChaves>\n", argv[0]);
-                exit(EXIT_FAILURE);
         }
     }
 

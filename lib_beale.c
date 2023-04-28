@@ -4,6 +4,8 @@
 
 #include "lib_beale.h"
 
+const char UNKNOWN_CHAR = '#';
+
 void create_keyfile(char *keyfile, struct char_list *char_list)
 {
     FILE *stream = fopen(keyfile, "w");
@@ -102,9 +104,9 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
             fprintf(output_stream, "%d ", random);
         }
         else if (letter == ' ')
-            fprintf(output_stream, "%d ", SPACE_CHAR);
+            fprintf(output_stream, "%d ", SPACE_CHARCODE);
         else
-            fprintf(output_stream, "%d ", UNKNOWN_CHAR);
+            fprintf(output_stream, "%d ", UNKNOWN_CHARCODE);
     }
 
     if (keyfile != NULL)
@@ -113,6 +115,8 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
     destroy_char_list(char_list);
     fclose(input_stream);
     fclose(book_stream);
+
+    printf("Mensagem codificada com sucesso!\n");
 }
 
 void decode_using_book(char *input, char *book, char *output)
@@ -139,10 +143,10 @@ void decode_using_book(char *input, char *book, char *output)
         {
             int number = atoi(token);
 
-            if (number == SPACE_CHAR)
+            if (number == SPACE_CHARCODE)
                 fprintf(output_stream, " ");
-            else if (number == UNKNOWN_CHAR)
-                fprintf(output_stream, "?");
+            else if (number == UNKNOWN_CHARCODE)
+                fprintf(output_stream, "%c", UNKNOWN_CHAR);
             else
             {
                 struct char_node *char_node = find_char_node_by_num(char_list, number);
@@ -157,6 +161,9 @@ void decode_using_book(char *input, char *book, char *output)
     fclose(output_stream);
     fclose(input_stream);
     fclose(book_stream);
+
+    printf("Mensagem decodificada com sucesso!\n");
+    printf("Obs.: O caractere (%c) representa um caractere desconhecido\n", UNKNOWN_CHAR);
 }
 
 void decode_using_keyfile(char *input, char *keyfile, char *output)

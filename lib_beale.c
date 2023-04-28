@@ -100,7 +100,7 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
 
             char_node = find_char_node(char_list, letter);
             int random = get_random_num_node(char_node->num_list)->data;
-            
+
             fprintf(output_stream, "%d ", random);
         }
         else if (letter == ' ')
@@ -155,7 +155,7 @@ void decode_using_book(char *input, char *book, char *output)
 
             token = strtok(NULL, " ");
         }
-    }    
+    }
 
     destroy_char_list(char_list);
     fclose(output_stream);
@@ -168,7 +168,7 @@ void decode_using_book(char *input, char *book, char *output)
 
 void decode_using_keyfile(char *input, char *keyfile, char *output)
 {
-    FILE *keyfile_stream, *input_stream;
+    FILE *keyfile_stream, *input_stream, *output_stream;
 
     if ((keyfile_stream = fopen(keyfile, "r")) == NULL)
         throw_error("Nao foi possivel abrir o arquivo de chaves");
@@ -176,8 +176,60 @@ void decode_using_keyfile(char *input, char *keyfile, char *output)
     if ((input_stream = fopen(input, "r")) == NULL)
         throw_error("Nao foi possivel abrir a mensagem codificada");
 
-    // TODO: implementar a decodificacao
+    // start
+    char line[LINE_SIZE];
+    struct char_list *char_list = create_char_list();
 
+    while (fgets(line, LINE_SIZE, keyfile_stream) != NULL)
+    {
+        char *token = strtok(line, ":");
+
+        char letter = token[0];
+
+        if (is_uppercase(letter))
+            letter = to_lowercase(letter);
+
+        struct char_node *node = insert_char_node(char_list, letter);
+
+        token = strtok(NULL, " ");
+
+        while (token != NULL)
+        {
+            int number = atoi(token);
+            insert_num_node(node->num_list, number);
+            token = strtok(NULL, " ");
+        }
+    }
+
+    if ((output_stream = fopen(output, "w")) == NULL)
+        throw_error("Nao foi possivel abrir o arquivo de saida");
+
+    while (fgets(line, LINE_SIZE, input_stream) != NULL)
+    {
+        char *token = strtok(line, " ");
+
+        while (token != NULL)
+        {
+            int number = atoi(token);
+
+            if (number == SPACE_CHARCODE)
+                fprintf(output_stream, " ");
+            else if (number == UNKNOWN_CHARCODE)
+                fprintf(output_stream, "%c", UNKNOWN_CHAR);
+            else
+            {
+                struct char_node *char_node = find_char_node_by_num(char_list, number);
+                fprintf(output_stream, "%c", char_node->data);
+            }
+
+            token = strtok(NULL, " ");
+        }
+    }
+    // end
+    
     fclose(keyfile_stream);
     fclose(input_stream);
+
+    printf("Mensagem decodificada com sucesso!\n");
+    printf("Obs.: O caractere (%c) representa um caractere desconhecido\n", UNKNOWN_CHAR);
 }

@@ -94,14 +94,14 @@ void insert_num_node(struct num_list *list, int data)
     list->size++;
 }
 
-void insert_char_node(struct char_list *list, char data)
+struct char_node *insert_char_node(struct char_list *list, char data)
 {
     struct char_node *node = create_char_node(data);
 
     if (list->head == NULL)
     {
         list->head = node;
-        return;
+        return node;
     }
 
     struct char_node *current = list->head;
@@ -123,6 +123,8 @@ void insert_char_node(struct char_list *list, char data)
         previous->next = node;
         node->next = current;
     }
+
+    return node;
 }
 
 struct char_node *find_char_node(struct char_list *list, char data)

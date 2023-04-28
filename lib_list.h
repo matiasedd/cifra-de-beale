@@ -1,20 +1,24 @@
-struct num_node {
+struct num_node
+{
     int data;
     struct num_node *next;
 };
 
-struct num_list {
+struct num_list
+{
     int size;
     struct num_node *head;
 };
 
-struct char_node {
+struct char_node
+{
     char data;
     struct char_node *next;
     struct num_list *num_list;
 };
 
-struct char_list {
+struct char_list
+{
     struct char_node *head;
 };
 
@@ -26,7 +30,7 @@ struct char_node *create_char_node(char data);
 
 struct num_node *create_num_node(int data);
 
-void insert_char_node(struct char_list *list, char data);
+struct char_node *insert_char_node(struct char_list *list, char data);
 
 void insert_num_node(struct num_list *list, int data);
 

@@ -74,6 +74,35 @@ struct char_list *create_list_from_book(FILE *book_stream)
     return char_list;
 }
 
+struct char_list *create_list_from_keyfile(FILE *keyfile_stream)
+{
+    char line[LINE_SIZE];
+    struct char_list *char_list = create_char_list();
+
+    while (fgets(line, LINE_SIZE, keyfile_stream) != NULL)
+    {
+        char *token = strtok(line, ":");
+
+        char letter = token[0];
+
+        if (is_uppercase(letter))
+            letter = to_lowercase(letter);
+
+        struct char_node *node = insert_char_node(char_list, letter);
+
+        token = strtok(NULL, " ");
+
+        while (token != NULL)
+        {
+            int number = atoi(token);
+            insert_num_node(node->num_list, number);
+            token = strtok(NULL, " ");
+        }
+    }
+
+    return char_list;
+}
+
 void encode_message(char *book, char *input, char *output, char *keyfile)
 {
     FILE *book_stream, *input_stream, *output_stream;
@@ -113,6 +142,7 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
         create_keyfile(keyfile, char_list);
 
     destroy_char_list(char_list);
+    fclose(output_stream);
     fclose(input_stream);
     fclose(book_stream);
 
@@ -176,30 +206,8 @@ void decode_using_keyfile(char *input, char *keyfile, char *output)
     if ((input_stream = fopen(input, "r")) == NULL)
         throw_error("Nao foi possivel abrir a mensagem codificada");
 
-    // start
     char line[LINE_SIZE];
-    struct char_list *char_list = create_char_list();
-
-    while (fgets(line, LINE_SIZE, keyfile_stream) != NULL)
-    {
-        char *token = strtok(line, ":");
-
-        char letter = token[0];
-
-        if (is_uppercase(letter))
-            letter = to_lowercase(letter);
-
-        struct char_node *node = insert_char_node(char_list, letter);
-
-        token = strtok(NULL, " ");
-
-        while (token != NULL)
-        {
-            int number = atoi(token);
-            insert_num_node(node->num_list, number);
-            token = strtok(NULL, " ");
-        }
-    }
+    struct char_list *char_list = create_list_from_keyfile(keyfile_stream);
 
     if ((output_stream = fopen(output, "w")) == NULL)
         throw_error("Nao foi possivel abrir o arquivo de saida");
@@ -225,9 +233,10 @@ void decode_using_keyfile(char *input, char *keyfile, char *output)
             token = strtok(NULL, " ");
         }
     }
-    // end
     
+    destroy_char_list(char_list);
     fclose(keyfile_stream);
+    fclose(output_stream);
     fclose(input_stream);
 
     printf("Mensagem decodificada com sucesso!\n");

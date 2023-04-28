@@ -31,20 +31,12 @@ void create_keyfile(char *keyfile, struct char_list *char_list)
     fclose(stream);
 }
 
-void encode_message(char *book, char *input, char *output, char *keyfile)
+struct char_list *create_list_from_book(FILE *book_stream)
 {
-    FILE *book_stream, *input_stream, *output_stream;
-
-    if ((book_stream = fopen(book, "r")) == NULL)
-        throw_error("Nao foi possivel abrir o livro cifra");
-
-    if ((input_stream = fopen(input, "r")) == NULL)
-        throw_error("Nao foi possivel abrir a mensagem original");
-
     int counter = 0;
+    struct char_node *char_node;
     char letter, line[LINE_SIZE];
 
-    struct char_node *char_node;
     struct char_list *char_list = create_char_list();
 
     if (char_list == NULL)
@@ -76,6 +68,23 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
             token = strtok(NULL, " ");
         }
     }
+
+    return char_list;
+}
+
+void encode_message(char *book, char *input, char *output, char *keyfile)
+{
+    FILE *book_stream, *input_stream, *output_stream;
+
+    if ((book_stream = fopen(book, "r")) == NULL)
+        throw_error("Nao foi possivel abrir o livro cifra");
+
+    if ((input_stream = fopen(input, "r")) == NULL)
+        throw_error("Nao foi possivel abrir a mensagem original");
+
+    char letter;
+    struct char_node *char_node;
+    struct char_list *char_list = create_list_from_book(book_stream);
 
     if ((output_stream = fopen(output, "w")) == NULL)
         throw_error("Nao foi possivel abrir o arquivo de saida");

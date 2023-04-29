@@ -145,6 +145,8 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
         }
         else if (letter == ' ')
             fprintf(output_stream, "%d ", SPACE_CHARCODE);
+        else if (letter == '\n')
+            fprintf(output_stream, "%d ", NEWLINE_CHARCODE);
         else
             fprintf(output_stream, "%d ", UNKNOWN_CHARCODE);
     }
@@ -183,6 +185,8 @@ void decode_using_book(char *input, char *book, char *output)
 
             if (number == SPACE_CHARCODE)
                 fprintf(output_stream, " ");
+            else if (number == NEWLINE_CHARCODE)
+                fprintf(output_stream, "\n");
             else if (number == UNKNOWN_CHARCODE)
                 fprintf(output_stream, "%c", UNKNOWN_CHAR);
             else
@@ -230,6 +234,8 @@ void decode_using_keyfile(char *input, char *keyfile, char *output)
 
             if (number == SPACE_CHARCODE)
                 fprintf(output_stream, " ");
+            else if (number == NEWLINE_CHARCODE)
+                fprintf(output_stream, "\n");
             else if (number == UNKNOWN_CHARCODE)
                 fprintf(output_stream, "%c", UNKNOWN_CHAR);
             else

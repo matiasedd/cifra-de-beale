@@ -8,6 +8,7 @@
 
 #define SPACE_CHARCODE -1
 #define UNKNOWN_CHARCODE -2 
+#define NEWLINE_CHARCODE -3
 
 /*
  * Responsável por codificar uma mensagem.

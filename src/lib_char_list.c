@@ -81,6 +81,29 @@ struct char_node *find_char_node(struct char_list *list, char data)
     return NULL;
 }
 
+struct char_node *find_char_node_by_num(struct char_list *list, int num)
+{
+    struct num_node *num_node;
+    struct char_node *char_node = list->head;
+
+    while (char_node != NULL)
+    {
+        num_node = char_node->num_list->head;
+
+        while (num_node != NULL)
+        {
+            if (num_node->data == num)
+                return char_node;
+
+            num_node = num_node->next;
+        }
+
+        char_node = char_node->next;
+    }
+
+    return NULL;
+}
+
 void print_char_list(struct char_list *list)
 {
     struct char_node *node = list->head;

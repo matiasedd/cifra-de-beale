@@ -7,7 +7,7 @@ LIBS_DIR = libs
 
 TARGET = beale
 
-OBJECTS = $(OBJ_DIR)/lib_utils.o $(OBJ_DIR)/lib_list.o $(OBJ_DIR)/lib_beale.o
+OBJECTS = $(OBJ_DIR)/lib_utils.o $(OBJ_DIR)/lib_char_list.o $(OBJ_DIR)/lib_num_list.o $(OBJ_DIR)/lib_beale.o
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBS_DIR)/%.h
 	$(CC) $(CFLAGS) -c $< -o $@

@@ -1,5 +1,4 @@
 #include "lib_utils.h"
-#include "lib_num_list.h"
 #include "lib_char_list.h"
 
 #define NO 0

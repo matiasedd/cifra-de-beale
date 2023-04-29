@@ -117,17 +117,28 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
     struct char_node *char_node;
     struct char_list *char_list = create_list_from_book(book_stream);
 
+    if (keyfile != NULL)
+        create_keyfile(keyfile, char_list);
+
     if ((output_stream = fopen(output, "w")) == NULL)
         throw_error("Nao foi possivel abrir o arquivo de saida");
 
     while ((letter = fgetc(input_stream)) != EOF)
-    {
+    {       
         if (is_alphanumeric(letter))
         {
             if (is_uppercase(letter))
                 letter = to_lowercase(letter);
 
             char_node = find_char_node(char_list, letter);
+
+            if (char_node == NULL)
+            {
+                remove(output);
+                fprintf(stderr, "ERRO: Nao foi possivel encontrar o caractere '%c' nas chaves de codificacao!\n", letter);
+                exit(EXIT_FAILURE);
+            }
+
             int random = get_random_num_node(char_node->num_list)->data;
 
             fprintf(output_stream, "%d ", random);
@@ -137,9 +148,6 @@ void encode_message(char *book, char *input, char *output, char *keyfile)
         else
             fprintf(output_stream, "%d ", UNKNOWN_CHARCODE);
     }
-
-    if (keyfile != NULL)
-        create_keyfile(keyfile, char_list);
 
     destroy_char_list(char_list);
     fclose(output_stream);
@@ -233,7 +241,7 @@ void decode_using_keyfile(char *input, char *keyfile, char *output)
             token = strtok(NULL, " ");
         }
     }
-    
+
     destroy_char_list(char_list);
     fclose(keyfile_stream);
     fclose(output_stream);
